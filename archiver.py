@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import cgi
 import requests
@@ -7,11 +7,11 @@ import os
 import datetime
 import schedule
 import time
-
-
+import traceback
+import threading
 # Api user/key from security tab in profile
-ApiUser = os.environ["apiuser"] 
-ApiKey = os.environ["apikey"] 
+ApiUser = os.environ["apiuser"]
+ApiKey = os.environ["apikey"]
 
 # Limit the size of the container to this, the site will not send you more torrents
 # Once your total container size exceeds this amount. This is a 'soft' limit, allowing one torrent to
@@ -48,6 +48,7 @@ payload = {
 }
 
 interval=int(os.environ.get("interval") or 20)
+
 
 def run():
     try:
@@ -97,17 +98,21 @@ def run():
         print("Archive tool finished: %s" % now.strftime("%Y-%m-%d %H:%M:%S"))
         print("")
     except Exception as E:
+        print(traceback.format_exc())
         print(E)
 
 
 
+def run_threaded(job_func):
+    job_thread = threading.Thread(target=job_func)
+    job_thread.start()
 
 def job():
-    #run once
-    run()
-    schedule.every(interval).minutes.do(run)
+    schedule.every(interval).minutes.do(run_threaded,run)
     while True:
         schedule.run_pending()
         time.sleep(1)
 if __name__ == "__main__":
+    print("Starting script")
     job()
+  
