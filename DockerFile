@@ -2,6 +2,7 @@
 FROM       ubuntu:latest
 RUN        mkdir -p /root/torrent
 RUN        mkdir -p /root/script
+RUN        mkdir -p /root/log
 RUN        apt-get update
 RUN        apt-get upgrade -y
 RUN        apt-get install software-properties-common -y
@@ -9,14 +10,9 @@ RUN        add-apt-repository universe -y
 RUN        apt-get update
 RUN        apt-get install python3-pip python3.10 -y
 RUN        pip3 install requests
+RUN        pip install schedule
 WORKDIR /root/script
-ARG FOO=bar
-
-
-COPY archiever.py archiever.py
-
-# RUN cat archiver.py
-# # ENTRYPOINT ["tail", "-f", "/dev/null"]
-CMD ["python3","archiever.py"]
+COPY archiver.py archiver.py
+CMD ["python3", "archiver.py"]
 
 
