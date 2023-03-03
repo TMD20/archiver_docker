@@ -10,8 +10,6 @@ RUN        apt-get update
 RUN        apt-get install python3-pip python3.10 -y
 RUN        pip3 install requests
 WORKDIR /root/script
-ARG FOO=bar
-
 
 COPY archiever.py archiever.py
 
